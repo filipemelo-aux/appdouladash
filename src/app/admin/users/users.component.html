@@ -1,0 +1,125 @@
+<app-layout [user]="user()" title="Gerenciamento de Usuários" [navItems]="navItems" themeColor="rose" (logout)="authService.logout()">
+  <div class="mb-6 flex justify-between items-center">
+    <h2 class="text-xl font-semibold text-gray-700">Todos os Usuários</h2>
+  </div>
+
+  @if (successMessage()) {
+    <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg" role="alert">
+      <span class="font-medium">Sucesso:</span> {{ successMessage() }}
+    </div>
+  }
+  @if (error()) {
+    <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+      <span class="font-medium">Erro:</span> {{ error() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <p class="text-gray-500">Carregando usuários...</p>
+  } @else {
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full leading-normal">
+          <thead>
+            <tr>
+              <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nome</th>
+              <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+              <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Perfil (Role)</th>
+              <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+              <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of users(); track u.id) {
+              <tr [class.bg-yellow-50]="isRowChanged(u.id)">
+                <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                  <p class="text-gray-900 whitespace-no-wrap">{{ u.full_name || '-' }}</p>
+                  <p class="text-gray-400 whitespace-no-wrap text-xs font-mono">{{ u.id }}</p>
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                  <p class="text-gray-900 whitespace-no-wrap">{{ u.email }}</p>
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 text-sm w-48">
+                  <select [disabled]="!isAdmin()" [value]="u.role" (change)="onRoleChange(u.id, $event)" class="form-select block w-full border-gray-300 rounded-md shadow-sm focus:border-rose-300 focus:ring focus:ring-rose-200 focus:ring-opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed">
+                    <option value="admin">Admin</option>
+                    <option value="assistant">Assistente</option>
+                    <option value="client">Cliente</option>
+                  </select>
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" [checked]="u.active" (change)="onStatusChange(u.id, $event)" class="sr-only peer" [disabled]="!isAdmin()">
+                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-rose-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                    <span class="ml-3 text-sm font-medium text-gray-900">{{ u.active ? 'Ativo' : 'Inativo' }}</span>
+                  </label>
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 text-sm text-center">
+                   <div class="flex items-center justify-center space-x-2">
+                     @if (isAdmin()) {
+                      <button (click)="onUpdateUser(u.id)" [disabled]="!isRowChanged(u.id) || updatingUsers().has(u.id)" class="px-3 py-1.5 bg-rose-500 text-white rounded-md text-xs hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        @if (updatingUsers().has(u.id)) {
+                          <span>Salvando...</span>
+                        } @else {
+                          <span>Atualizar</span>
+                        }
+                      </button>
+                      <div class="h-6 border-l border-gray-300"></div>
+                      <button (click)="onResetPassword(u)" [disabled]="isResettingPasswordFor() === u.id" title="Resetar Senha" class="p-2 text-gray-500 hover:bg-gray-100 rounded-md disabled:opacity-50">
+                        @if (isResettingPasswordFor() === u.id) {
+                            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        } @else {
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H5v-2H3v-2H1v-4a6 6 0 016-6h4a6 6 0 016 6z"></path></svg>
+                        }
+                      </button>
+                      <button (click)="onForcePasswordChange(u)" [disabled]="isForcingPasswordChangeFor() === u.id" title="Forçar Troca de Senha" class="p-2 text-gray-500 hover:bg-gray-100 rounded-md disabled:opacity-50">
+                        @if (isForcingPasswordChangeFor() === u.id) {
+                           <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        } @else {
+                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        }
+                      </button>
+                     } @else {
+                        <span class="text-xs text-gray-400">Ações desabilitadas</span>
+                     }
+                   </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center py-10 text-gray-500">
+                  Nenhum usuário encontrado.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</app-layout>
+
+<!-- Recovery Link Modal -->
+@if (isRecoveryLinkModalOpen()) {
+  <div class="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center" (click)="closeRecoveryLinkModal()">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg z-50 m-4" (click)="$event.stopPropagation()">
+      <div class="p-6">
+        <div class="flex items-start justify-between">
+           <h3 class="text-lg font-medium leading-6 text-gray-900">Link de Recuperação de Senha</h3>
+           <button (click)="closeRecoveryLinkModal()" class="p-1 text-gray-400 rounded-md hover:bg-gray-100">&times;</button>
+        </div>
+        <p class="mt-2 text-sm text-gray-600">Copie e envie o link abaixo para o usuário. Este link é de uso único e irá expirar.</p>
+        <div class="mt-4 flex rounded-md shadow-sm">
+          <input #recoveryLinkInput type="text" readonly [value]="recoveryLink()" class="block w-full flex-1 rounded-none rounded-l-md border-gray-300 bg-gray-50 px-3 py-2 focus:border-rose-500 focus:ring-rose-500 sm:text-sm">
+          <button (click)="recoveryLinkInput.select(); document.execCommand('copy')" class="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-100 px-4 text-sm font-medium text-gray-700 hover:bg-gray-200">
+            Copiar
+          </button>
+        </div>
+      </div>
+       <div class="bg-gray-50 px-4 py-3 sm:px-6 flex flex-row-reverse">
+        <button type="button" (click)="closeRecoveryLinkModal()" class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+}

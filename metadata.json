@@ -1,0 +1,5 @@
+{
+  "name": "Sistema de Gestão para Doulas",
+  "description": "Um sistema completo para doulas gerenciarem suas clientes, contendo um dashboard administrativo e um portal para gestantes e puérperas. Construído com Angular e Supabase.",
+  "requestFramePermissions": []
+}

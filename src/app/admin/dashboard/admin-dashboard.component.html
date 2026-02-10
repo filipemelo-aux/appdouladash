@@ -1,0 +1,83 @@
+<app-layout 
+  [user]="user()" 
+  title="Dashboard Administrativo" 
+  [navItems]="navItems"
+  themeColor="rose"
+  (logout)="logout()">
+
+  <!-- Indicator Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <!-- Card 1 -->
+    <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+      <div class="bg-rose-100 text-rose-600 rounded-full p-3 mr-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A10.99 10.99 0 0012 12.75a10.99 10.99 0 00-3-5.197m3 5.197a4 4 0 110-5.292"></path></svg>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500">Gestantes Ativas</p>
+        <p class="text-2xl font-bold text-gray-800">12</p>
+      </div>
+    </div>
+    <!-- Card 2 -->
+    <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+      <div class="bg-amber-100 text-amber-600 rounded-full p-3 mr-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500">Próximos Encontros</p>
+        <p class="text-2xl font-bold text-gray-800">5</p>
+      </div>
+    </div>
+    <!-- Card 3 -->
+    <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+       <div class="bg-sky-100 text-sky-600 rounded-full p-3 mr-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500">Planos de Parto</p>
+        <p class="text-2xl font-bold text-gray-800">8</p>
+      </div>
+    </div>
+    <!-- Card 4 -->
+     <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+       <div class="bg-emerald-100 text-emerald-600 rounded-full p-3 mr-4">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+       </div>
+      <div>
+        <p class="text-sm text-gray-500">Faturamento (mês)</p>
+        <p class="text-2xl font-bold text-gray-800">R$ 7.500</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Sections -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Agenda da Semana</h2>
+      <p class="text-gray-600">Aqui ficará a visualização da agenda semanal com os próximos compromissos.</p>
+      <!-- Placeholder for calendar -->
+      <div class="mt-4 h-64 bg-gray-100 rounded-md flex items-center justify-center">
+        <span class="text-gray-400">Componente de Agenda</span>
+      </div>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Atividade Recente</h2>
+       <p class="text-gray-600">Um feed com as últimas atualizações e atividades.</p>
+       <!-- Placeholder for activity feed -->
+      <ul class="mt-4 space-y-4">
+        <li class="flex items-start">
+          <div class="w-2 h-2 bg-rose-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+          <p class="text-sm text-gray-600">Novo plano de parto adicionado por <span class="font-medium text-gray-800">Ana P.</span></p>
+        </li>
+        <li class="flex items-start">
+          <div class="w-2 h-2 bg-sky-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+          <p class="text-sm text-gray-600">Encontro de hoje com <span class="font-medium text-gray-800">Maria S.</span> concluído.</p>
+        </li>
+        <li class="flex items-start">
+          <div class="w-2 h-2 bg-emerald-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+          <p class="text-sm text-gray-600">Pagamento recebido de <span class="font-medium text-gray-800">Carla M.</span></p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</app-layout>
