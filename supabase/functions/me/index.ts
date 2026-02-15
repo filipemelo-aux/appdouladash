@@ -1,3 +1,10 @@
+// Fix for "Cannot find name 'Deno'". This provides a minimal type definition for the Deno global.
+declare const Deno: {
+  env: {
+    get: (key: string) => string | undefined;
+  };
+};
+
 import { serve } from "https://deno.land/std@0.192.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 

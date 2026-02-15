@@ -1,49 +1,61 @@
-console.log("SUPABASE URL:", import.meta.env.VITE_SUPABASE_URL);
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { testAuthLogin } from './dev/auth.test';
-import { testMe } from './dev/testMe';
+
+// FIX: Changed to namespace import for react-router-dom to work around potential module resolution issues where named exports are not found.
+import * as ReactRouterDOM from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import AdminLayout from './layouts/AdminLayout';
+import ProtectedRoute from './routes/ProtectedRoute';
+import ChangePasswordPage from './pages/ChangePasswordPage';
+import ClientDashboardPage from './pages/ClientDashboardPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
+import ClientsPage from './pages/ClientsPage';
+import AgendaPage from './pages/AgendaPage';
+import SettingsPage from './pages/SettingsPage';
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  useEffect(() => {
-    async function runTests() {
-      await testAuthLogin();   // espera login finalizar
-      await testMe();          // só depois chama /me
-    }
-
-    runTests();
-  }, []);
-
   return (
-    <>
-      <div>
-        <div>Papo de Doula</div>;
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <ReactRouterDOM.BrowserRouter>
+      <ReactRouterDOM.Routes>
+        {/* Rotas Públicas */}
+        <ReactRouterDOM.Route path="/" element={<ReactRouterDOM.Navigate to="/login" replace />} />
+        <ReactRouterDOM.Route path="/login" element={<LoginPage />} />
+        
+        {/* Rotas de Administração Protegidas com Layout */}
+        <ReactRouterDOM.Route
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'assistant']}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <ReactRouterDOM.Route path="/dashboard" element={<AdminDashboardPage />} />
+          <ReactRouterDOM.Route path="/clients" element={<ClientsPage />} />
+          <ReactRouterDOM.Route path="/agenda" element={<AgendaPage />} />
+          <ReactRouterDOM.Route path="/settings" element={<SettingsPage />} />
+        </ReactRouterDOM.Route>
 
-  )
+        {/* Outras Rotas Protegidas */}
+        <ReactRouterDOM.Route
+          path="/client"
+          element={
+            <ProtectedRoute allowedRoles={['client']}>
+              <ClientDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <ReactRouterDOM.Route
+          path="/change-password"
+          element={
+            <ProtectedRoute>
+              <ChangePasswordPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Rota de Fallback */}
+        <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/login" replace />} />
+      </ReactRouterDOM.Routes>
+    </ReactRouterDOM.BrowserRouter>
+  );
 }
 
-export default App
+export default App;
